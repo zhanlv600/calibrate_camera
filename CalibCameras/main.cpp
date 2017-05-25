@@ -75,7 +75,7 @@ int main()
 		destpath.clear();
 	}
 	std::ofstream fout(join_path(destpath, "calib_result.txt"));//conserve calibration result
-	scan_files(pathname, chesspic_vector);//find chess picture names in the pathname directory
+	int file_num = scan_files(pathname, chesspic_vector);//find chess picture names in the pathname directory
 	std::sort(chesspic_vector.begin(), chesspic_vector.end(), std::less<std::string>());
 
 	/*-------------------------------*/
@@ -83,7 +83,7 @@ int main()
 	cv::Size board_size = cv::Size(4, 6);
 	cv::Size image_size;
 	std::vector<std::vector<cv::Point2f>> images_points_list;
-	for (size_t i = 0; i < chesspic_vector.size(); i++)
+	for (size_t i = 0; i < file_num; i++)
 	{
 		cv::Mat image = cv::imread(join_path(pathname, chesspic_vector.at(i)));
 		if (i == 0)
@@ -116,7 +116,7 @@ int main()
 	cv::Mat intrinsicMat = cv::Mat(3, 3, CV_32FC1, cv::Scalar::all(0));
 	cv::Mat distCoeffs = cv::Mat(1, 5, CV_32FC1, cv::Scalar::all(0));// k1, k2, p1, p2, k3
 	std::vector<cv::Mat> tvecsMat; std::vector<cv::Mat> rvecsMat;
-	for (std::size_t i = 0; i < chesspic_vector.size(); i++)
+	for (std::size_t i = 0; i < file_num; i++)
 	{
 		std::vector<cv::Point3f> image_point3f;
 		for (std::size_t j = 0; j < board_size.height; j++)
@@ -183,7 +183,7 @@ int main()
 	cv::Mat R = cv::Mat::eye(3, 3, CV_32F);
 	std::string outfilename;
 	std::stringstream ss;
-	for (std::size_t i = 0; i < chesspic_vector.size(); i++)
+	for (std::size_t i = 0; i < file_num; i++)
 	{
 		std::cout << "undistort image " << i << "..." << std::endl;
 		cv::initUndistortRectifyMap(intrinsicMat, distCoeffs, R, intrinsicMat, image_size, CV_32FC1, mapx, mapy);
